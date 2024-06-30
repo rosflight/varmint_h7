@@ -85,10 +85,7 @@ struct GNSSData
 
     uint64_t rosflight_timestamp; // microseconds, time stamp of last byte in the message
 
-    GNSSData()
-    {
-        memset(this, 0, sizeof(GNSSData));
-    }
+  GNSSData() { memset(this, 0, sizeof(GNSSData)); }
 };
 
 struct GNSSFull
@@ -121,10 +118,7 @@ struct GNSSFull
     uint16_t p_dop;
     uint64_t rosflight_timestamp; // microseconds, time stamp of last byte in the message
 
-    GNSSFull()
-    {
-        memset(this, 0, sizeof(GNSSFull));
-    }
+  GNSSFull() { memset(this, 0, sizeof(GNSSFull)); }
 };
 
 class Board
