@@ -35,7 +35,10 @@
  ******************************************************************************
  **/
 
-#include <Varmint.h>
+#include <mavlink.h>
+#include <rosflight.h>
+
+extern rosflight_firmware::Board &board;
 
 #ifdef __cplusplus
 extern "C"
@@ -48,8 +51,8 @@ extern "C"
 
 int main(void)
 {
-    extern rosflight_firmware::Board *board;
-    board->init_board();
+    extern rosflight_firmware::Board &board;
+    board.init_board();
 
     return 0;
 }
