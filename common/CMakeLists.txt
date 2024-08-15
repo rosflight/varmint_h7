@@ -76,6 +76,7 @@ add_link_options(-mcpu=cortex-m7 -mthumb -mthumb-interwork -u _printf_float )
 ### build target ###
 
 add_executable(${TARGET_NAME}.elf ${ROSFLIGHT_SOURCES} ${VARMINT_SOURCES} ${LINKER_SCRIPT})
+target_link_libraries(${TARGET_NAME}.elf Eigen3::Eigen)
 target_compile_definitions(${TARGET_NAME}.elf PUBLIC
     GIT_VERSION_HASH=0x${GIT_VERSION_HASH}
     GIT_VERSION_STRING=\"${GIT_VERSION_STRING}\"
