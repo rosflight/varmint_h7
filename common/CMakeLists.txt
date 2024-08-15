@@ -28,6 +28,8 @@ if(NOT DEFINED TARGET_NAME)
     set(TARGET_NAME "varmint")
 endif()
 
+find_package(Eigen3 REQUIRED)
+
 include_directories(
     Core/Inc
     Drivers/STM32H7xx_HAL_Driver/Inc
