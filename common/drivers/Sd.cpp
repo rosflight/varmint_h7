@@ -104,7 +104,7 @@ bool Sd::read(uint8_t * dest, size_t len)
 }
 bool Sd::write(uint8_t * src, size_t len)
 {
-  uint16_t Nblocks = (len + 511) / 512;
+  uint16_t Nblocks = (len + SD_BLKSIZE - 1) / SD_BLKSIZE;
   //	printf("Nblocks = %u\n",Nblocks);
   //	if(Nblocks > sd_info.BlockNbr) Nblocks = sd_info.BlockNbr;
   if (Nblocks > SD_MAXBLKS) return 0; // too large and don't want to be here forever, throw an error
