@@ -40,7 +40,8 @@
 
 #include <CommonConfig.h>
 
-#define SANDBOX false // set this via CMAKE
+#define SANDBOX false
+#define BOARD_STATUS_PRINT false
 #define USE_TELEM 0   // 1 = use UART, 0 = use VCP for link to companion computer.
 
 // UART used for printf's
@@ -50,8 +51,13 @@
 // USB MiddleWare
 // See CommonConfig.h for more #defines
 
+//#define VCP_Transmit(buffer, length) CDC_Transmit(0, buffer, length)
+//#define VCP_Transmit(buffer, length) CDC_Transmit_FS(buffer, length)
+//#define VCP_Transmit(buffer, length) CDC_Transmit_HS(buffer, length)
+
 #define _USBD_USE_HS false
 extern PCD_HandleTypeDef hpcd_USB_OTG_FS; // USB FS (48 MB/s)
+//#define _USBD_CDC_ACM_COUNT 1
 //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -79,9 +85,10 @@ extern PCD_HandleTypeDef hpcd_USB_OTG_FS; // USB FS (48 MB/s)
 // clang-format on
 
 // 48-bit us counter.
-#define HTIM_LOW (&htim5) // 16-bit counter
+// Prefer to have the 32-bit counter on the low order bytes:
+#define HTIM_LOW (&htim5) // 32-bit counter
 #define HTIM_LOW_INSTANCE (TIM5)
-#define HTIM_HIGH (&htim12) // 32-bit overflow counter
+#define HTIM_HIGH (&htim12) // 16-bit overflow counter
 #define HTIM_HIGH_INSTANCE (TIM12)
 
 #define POLL_HTIM (&htim7) // High rate periodic interrupt timer (PITR)
@@ -90,6 +97,7 @@ extern PCD_HandleTypeDef hpcd_USB_OTG_FS; // USB FS (48 MB/s)
 #define POLLING_PERIOD_US (100)                       // 100us, 10kHz
 #define POLLING_FREQ_HZ (1000000 / POLLING_PERIOD_US) // 10000 Hz
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // Pwm's
 //#define PWM_SERVO_MIN 	  	(1000)
 //#define PWM_SERVO_MAX 	  	(2000)
@@ -199,7 +207,6 @@ extern PCD_HandleTypeDef hpcd_USB_OTG_FS; // USB FS (48 MB/s)
 //
 #define RC_HZ (SBUS_HZ)
 #define RC_BAUD (SBUS_BAUD)
-
 #define RC_UART (&huart6)
 #define RC_UART_INSTANCE (USART6)
 #define RC_UART_DMA (&hdma_usart6_rx)
@@ -210,7 +217,6 @@ extern PCD_HandleTypeDef hpcd_USB_OTG_FS; // USB FS (48 MB/s)
 #define UBX_FIFO_BUFFERS (UBX_NUM * (FIFO_MIN_BUFFERS + UBX_HZ / EPOCH_HZ))
 //#define	UBX_BAUD					(57600)
 
-//
 #define GPS_HZ (UBX_HZ)
 #define GPS_BAUD (57600)
 
@@ -253,14 +259,15 @@ extern PCD_HandleTypeDef hpcd_USB_OTG_FS; // USB FS (48 MB/s)
 
 #define ADC_ADC_INTERNAL (&hadc3)
 #define ADC_ADC_INSTANCE_INTERNAL (ADC3)
-// NOTE! _if_ ADC3 uses on BDMA and needs to be in SRAM4, can use regular DMA if available
-#define ADC_INT_DMA_RAM BDMA_RAM
+
+#define ADC_INT_DMA_RAM BDMA_RAM // NOTE! ADC3 using BDMA so this needs to be in SRAM4
 #define ADC_CHANNELS_INT (3)
 
 #define ADC_STM_TEMPERATURE (0 + ADC_CHANNELS_EXT) // INP 18 (Internal)
 #define ADC_STM_VBAT (1 + ADC_CHANNELS_EXT)        // INP 17 (Internal)
 #define ADC_STM_VREFINT (2 + ADC_CHANNELS_EXT)     // INP 19 (Internal)
 
+// NOTE! This lets us put all the config in one file
 // clang-format off
 #define ADC_CFG_CHANS_DEFINE \
 { \

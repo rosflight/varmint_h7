@@ -1,6 +1,7 @@
 /**
  ******************************************************************************
  * File     : VarmintService.cpp
+ *
  * Date     : Sep 27, 2023
  ******************************************************************************
  *
@@ -50,7 +51,7 @@ extern Time64 time64;
 #include <Polling.h>
 
 //////////////////////////////////////////////////////////////////////////////////////////
-// High Rate Periodic Timer Interrupt Routine for Polling
+// High Rate (10kHz) Periodic Timer Interrupt Routine for Polling
 //
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 {
@@ -129,7 +130,7 @@ void UART_RxIsrCallback(UART_HandleTypeDef * huart)
     __HAL_UART_CLEAR_IDLEFLAG(huart);
     if (huart->hdmarx != 0) ((DMA_Stream_TypeDef *) (huart->hdmarx)->Instance)->CR &= ~DMA_SxCR_EN;
   } else {
-    if (varmint.telem_.isMy(huart)) varmint.telem_.rxIsrCallback(huart);
+    if (varmint.telem_.isMy(huart)) { varmint.telem_.rxIsrCallback(huart); }
   }
 }
 
@@ -157,4 +158,16 @@ void CDC_Receive_Callback(uint8_t chan, uint8_t * buffer, uint16_t size)
 void CDC_TransmitCplt_Callback(uint8_t chan, uint8_t * buffer, uint16_t size)
 {
   if (chan == 0) varmint.vcp_.txCdcCallback();
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// SD card
+void HAL_SD_TxCpltCallback(SD_HandleTypeDef * hsd)
+{
+  if (varmint.sd_.isMy(hsd)) { varmint.sd_.endTxDma(hsd); }
+}
+
+void HAL_SD_RxCpltCallback(SD_HandleTypeDef * hsd)
+{
+  if (varmint.sd_.isMy(hsd)) { varmint.sd_.endRxDma(hsd); }
 }

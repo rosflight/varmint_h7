@@ -40,20 +40,25 @@
 
 #include <CommonConfig.h>
 
-#define SANDBOX false // set this via CMAKE
+#define SANDBOX false
+#define BOARD_STATUS_PRINT false
 #define USE_TELEM 0   // 1 = use UART, 0 = use VCP for link to companion computer.
 
 // UART used for printf's
 #define MISC_HUART (&huart2)
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-// MiddleWare name : AL94.I-CUBE-USBD-COMPOSITE.1.0.3
+// USB MiddleWare
 // See CommonConfig.h for more #defines
+
+//#define VCP_Transmit(buffer, length) CDC_Transmit(0, buffer, length)
+//#define VCP_Transmit(buffer, length) CDC_Transmit_FS(buffer, length)
+//#define VCP_Transmit(buffer, length) CDC_Transmit_HS(buffer, length)
+
 #define _USBD_USE_HS false
 extern PCD_HandleTypeDef hpcd_USB_OTG_FS; // USB FS (48 MB/s)
 //#define _USBD_CDC_ACM_COUNT 1
-//#define VCP_Transmit(buffer, length) CDC_Transmit(0, buffer, length)
-// End MiddleWare name : AL94.I-CUBE-USBD-COMPOSITE.1.0.3
+//
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 // clang-format off
@@ -218,7 +223,6 @@ extern PCD_HandleTypeDef hpcd_USB_OTG_FS; // USB FS (48 MB/s)
 #define UBX_FIFO_BUFFERS (UBX_NUM * (FIFO_MIN_BUFFERS + UBX_HZ / EPOCH_HZ))
 //#define	UBX_BAUD					(57600)
 
-//
 #define GPS_HZ (UBX_HZ)
 #define GPS_BAUD (57600)
 

@@ -77,13 +77,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 
 void HAL_GPIO_EXTI_Callback(uint16_t exti_pin)
 {
-  if (varmint.imu0_.isMy(exti_pin)) varmint.imu0_.startDma();
-  if (varmint.imu1_.isMy(exti_pin)) varmint.imu1_.startDma();
-  if (varmint.gps_.isMy(exti_pin)) varmint.gps_.pps(time64.Us());
+  if (varmint.imu0_.isMy(exti_pin)) { varmint.imu0_.startDma(); }
+  if (varmint.imu1_.isMy(exti_pin)) { varmint.imu1_.startDma(); }
+  if (varmint.gps_.isMy(exti_pin)) { varmint.gps_.pps(time64.Us()); }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // SPI Tx complete callback
+//
 // void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)  // All spi dma tx interrupts are handled here.
 //{
 //}
@@ -92,10 +93,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t exti_pin)
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef * hspi) // All spi dma rx interrupts are handled here.
 {
   // do not use 'else if' since some of these share SPI
-  if (varmint.imu0_.isMy(hspi)) varmint.imu0_.endDma();
-  if (varmint.imu1_.isMy(hspi)) varmint.imu1_.endDma();
-  if (varmint.mag_.isMy(hspi)) varmint.mag_.endDma();
-  if (varmint.baro_.isMy(hspi)) varmint.baro_.endDma();
+  if (varmint.imu0_.isMy(hspi)) { varmint.imu0_.endDma(); }
+  if (varmint.imu1_.isMy(hspi)) { varmint.imu1_.endDma(); }
+  if (varmint.mag_.isMy(hspi)) { varmint.mag_.endDma(); }
+  if (varmint.baro_.isMy(hspi)) { varmint.baro_.endDma(); }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -122,7 +123,7 @@ void UART_RxIsrCallback(UART_HandleTypeDef * huart)
     __HAL_UART_CLEAR_IDLEFLAG(huart);
     if (huart->hdmarx != 0) ((DMA_Stream_TypeDef *) (huart->hdmarx)->Instance)->CR &= ~DMA_SxCR_EN;
   } else {
-    if (varmint.telem_.isMy(huart)) varmint.telem_.rxIsrCallback(huart);
+    if (varmint.telem_.isMy(huart)) { varmint.telem_.rxIsrCallback(huart); }
   }
 }
 
@@ -150,4 +151,16 @@ void CDC_Receive_Callback(uint8_t chan, uint8_t * buffer, uint16_t size)
 void CDC_TransmitCplt_Callback(uint8_t chan, uint8_t * buffer, uint16_t size)
 {
   if (chan == 0) varmint.vcp_.txCdcCallback();
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// SD card
+void HAL_SD_TxCpltCallback(SD_HandleTypeDef * hsd)
+{
+  if (varmint.sd_.isMy(hsd)) { varmint.sd_.endTxDma(hsd); }
+}
+
+void HAL_SD_RxCpltCallback(SD_HandleTypeDef * hsd)
+{
+  if (varmint.sd_.isMy(hsd)) { varmint.sd_.endRxDma(hsd); }
 }

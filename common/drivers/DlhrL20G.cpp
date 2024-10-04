@@ -90,8 +90,6 @@ uint32_t DlhrL20G::init(
     initializationStatus_ |= DRIVER_SELF_DIAG_ERROR;
   }
 
-  misc_printf("\n");
-
   //	{
   //		uint16_t dT = 30;
   //		HAL_StatusTypeDef stat;
