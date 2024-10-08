@@ -61,8 +61,8 @@ public:
 
 private:
   SD_HandleTypeDef * hsd_;
-  bool txComplete_ = false;
-  bool rxComplete_ = false;
+  volatile bool txComplete_ = false;
+  volatile bool rxComplete_ = false;
 };
 
 #endif /* SD_H_ */

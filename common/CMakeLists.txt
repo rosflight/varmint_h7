@@ -62,7 +62,7 @@ add_definitions(-DDEBUG -DUSE_HAL_DRIVER)
 ### Compiler and Assembler
 #add_compile_definitions(ARM_MATH_CM4;ARM_MATH_MATRIX_CHECK;ARM_MATH_ROUNDING)
 # Debug settings
-add_compile_options(-g3 -O0)
+add_compile_options(-g3 -O3)
 add_compile_options($<$<COMPILE_LANGUAGE:ASM>:-x$<SEMICOLON>assembler-with-cpp>)
 
 # Place global variables in BSS section of the object file (memory)
