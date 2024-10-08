@@ -92,7 +92,7 @@ add_compile_options(--specs=nosys.specs)
 # c++ only options
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti -fno-use-cxa-atexit")
 # C-only options
-#set(CMAKE_C_COMPILER "${CMAKE_C_COMPILER}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ")
 
 ### Linker ###
 # Set MCU type

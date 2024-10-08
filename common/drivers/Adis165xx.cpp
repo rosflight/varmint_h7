@@ -182,10 +182,10 @@ uint32_t Adis165xx::init(
   // [0] 1 active high when data is valid (default is 0, low)
   // 0b0000 0010 1000 0101 = 0x0285
 
-  if (sampleRateHz_ == 2000) // use 32-bit data mode
+  if (sampleRateHz_ == 2000) // use 16-bit data mode
   {
     writeRegister(ADIS16500_MSC_CTRL, 0x0085); // values 0b0000 0000 1000 0101 = 0x0085
-  } else                                       // use 16-bit data mode
+  } else                                       // use 32-bit data mode
   {
     writeRegister(ADIS16500_MSC_CTRL, 0x0285); // values 0b0000 0010 1000 0101 = 0x0285
   }
