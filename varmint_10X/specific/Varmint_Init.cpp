@@ -103,11 +103,11 @@ void Varmint::init_board(void)
                          //  MX_USART3_UART_Init();  // S.Bus, initialized elsewhere
                          //  MX_ADC1_Init();					// initialized elsewhere
                          //  MX_ADC3_Init();					// initialized elsewhere
-                         // MX_USB_DEVICE_Init();
+  // MX_USB_DEVICE_Init(); // initialized elsewhere
   MX_FDCAN1_Init();      // not used
                          //  MX_SDMMC1_SD_Init();		// initialized elsewhere
   MX_RTC_Init();         // not used
-  MX_CRC_Init();         // not used
+  MX_CRC_Init();         // Used for SD Card data checksum
   MX_RNG_Init();         // not used
 
 #if _USBD_USE_HS // USB HS (480MB/s

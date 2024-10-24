@@ -64,8 +64,34 @@ void verbose_equals(void)
 
 void sandbox(void)
 {
-  time64.dMs(5000);
 
+  //  time64.dMs(5000);
+  //  SD Card read/write (and CRC & RNG)
+  //  #define RNGLEN (512)
+  //  static uint32_t random_numbers[512];
+  //  for(int i=0;i<RNGLEN;i++) HAL_RNG_GenerateRandomNumber(&hrng, &(random_numbers[i]));
+  //
+  //  uint16_t len = RNGLEN*sizeof(uint32_t)-3; // subtract 1 to make it odd.
+  //  uint8_t *test1 = (uint8_t *)random_numbers;
+  //
+  //  // Write the test1 data to SD
+  //  bool ok1 = varmint.sd_.write(test1,len);
+  //  if(ok1) misc_printf("OK1 \n"); else misc_printf("NOT OK1 \n");
+  //
+  //  // result array
+  //  static uint8_t test2[RNGLEN*sizeof(uint32_t)];
+  //
+  //  // Read the data back
+  //
+  //  bool ok2 = varmint.sd_.read(test2,len);
+  //  if(ok2) misc_printf("OK2 \n");  else misc_printf("NOT OK2 \n");
+  //
+  //  for(int i=1; i<len; i++)
+  //  {
+  //    if (test1[i]!=test2[i]) misc_printf("[%u] %02X -> %02X\n ",i,test1[i],test2[i]);
+  //  }
+  //
+  //  time64.dMs(5000);
   //	 Test pwm outputs
   //
   //	float rates[PWM_CHANNELS] = {3e5,3e5,3e5,3e5,6e5,6e5,6e5,6e5,490,490};
@@ -81,6 +107,8 @@ void sandbox(void)
   //	  PROBE1_LO;
   //	  time64.dUs(450); ~ 2khs update rate
   //	}
+
+  time64.dMs(5000);
 
   verbose = true;
   uint32_t n = 0;

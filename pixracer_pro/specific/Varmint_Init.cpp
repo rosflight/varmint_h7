@@ -107,7 +107,7 @@ void Varmint::init_board(void)
   //	MX_USART1_UART_Init(); // Serial 5&6 connector, not used
   MX_USART2_UART_Init(); // Telem/Serial 1
                          //	MX_USART3_UART_Init(); // Serial 2 connector, not used
-                         //	MX_USART6_UART_Init();
+  //	MX_USART6_UART_Init(); // RC UART, initialized elsewhere
 
   //	MX_ADC3_Init(); // initialized elsewhere
   //	MX_ADC1_Init(); // initialized elsewhere
@@ -115,9 +115,9 @@ void Varmint::init_board(void)
   MX_FDCAN1_Init(); // not used yet
   MX_FDCAN2_Init(); // not used yet
 
-  //	MX_CRC_Init(); // not used
-  //	MX_RNG_Init(); // not used
-  //	MX_RTC_Init(); // not used
+  MX_CRC_Init(); // Used for SD Card data checksum
+  MX_RNG_Init(); // not used
+  MX_RTC_Init(); // not used
 
 #if _USBD_USE_HS // USB HS (480MB/s
   MX_USB_OTG_HS_PCD_Init();

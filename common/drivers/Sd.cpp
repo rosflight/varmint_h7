@@ -86,9 +86,12 @@ uint32_t Sd::init(SD_HandleTypeDef * hsd, SD_TypeDef * hsd_instance)
   return initializationStatus_;
 }
 
+
+#define SD_CRC_BYTES sizeof(uint32_t)
+
 bool Sd::read(uint8_t * dest, size_t len)
 {
-  uint16_t Nblocks = (len + SD_BLKSIZE - 1) / SD_BLKSIZE;
+  uint16_t Nblocks = (len + SD_CRC_BYTES + SD_BLKSIZE - 1) / SD_BLKSIZE;
   //	if(Nblocks > sd_info.BlockNbr) Nblocks = sd_info.BlockNbr;
   if (Nblocks > SD_MAXBLKS) { return 0; } // too large and don't want to be here forever, throw an error
 
@@ -102,19 +105,37 @@ bool Sd::read(uint8_t * dest, size_t len)
 
   while (!rxComplete_ && (timeout > time64.Us())) {} // wait for DMA to complete
 
-  if (rxComplete_) { memcpy(dest, sd_rx_buf, len); }
+  if (rxComplete_) {
+    // CRC must be set-up for byte sized data, i.e., hcrc.InputDataFormat = CRC_INPUTDATA_FORMAT_BYTES
+    // I'm not bothering to code for the case of data in any other format
+    if (hcrc.InputDataFormat != CRC_INPUTDATA_FORMAT_BYTES) { return false; }
+    uint32_t crc = HAL_CRC_Calculate(&hcrc,(uint32_t *) sd_rx_buf, len); // len Assumes hcrc.InputDataFormat = CRC_INPUTDATA_FORMAT_BYTES
+    uint8_t *crc2 = (uint8_t*)(&crc);
+    uint8_t *crc1 = (uint8_t*)(&(sd_rx_buf[len]));
+    if((crc1[0] != crc2[0])||(crc1[1] != crc2[1])||(crc1[2] != crc2[2])||(crc1[3] != crc2[3])) { return false; }
+    memcpy(dest, sd_rx_buf, len);
+  }
 
   return rxComplete_;
 }
 bool Sd::write(uint8_t * src, size_t len)
 {
-  uint16_t Nblocks = (len + SD_BLKSIZE - 1) / SD_BLKSIZE;
+  uint16_t Nblocks = (len + SD_CRC_BYTES + SD_BLKSIZE - 1) / SD_BLKSIZE;
   //	if(Nblocks > sd_info.BlockNbr) Nblocks = sd_info.BlockNbr;
   if (Nblocks > SD_MAXBLKS) return 0; // too large and don't want to be here forever, throw an error
   HAL_StatusTypeDef hal_status;
 
   txComplete_ = false;
   memcpy(sd_tx_buf, src, len);
+  // CRC must be set-up for byte sized data hcrc.InputDataFormat = CRC_INPUTDATA_FORMAT_BYTES
+  // I'm not bothering to code for the case of data in any other format
+  if (hcrc.InputDataFormat != CRC_INPUTDATA_FORMAT_BYTES) { return false; }
+  uint32_t crc = HAL_CRC_Calculate(&hcrc,(uint32_t *) sd_tx_buf, len);
+  uint8_t *crc2 = (uint8_t*)(&crc);
+  sd_tx_buf[len]   = crc2[0];
+  sd_tx_buf[len+1] = crc2[1];
+  sd_tx_buf[len+2] = crc2[2];
+  sd_tx_buf[len+3] = crc2[3];
 
   hal_status = HAL_SD_WriteBlocks_DMA(hsd_, sd_tx_buf, 0, Nblocks);
   if (hal_status != HAL_OK) return false;
