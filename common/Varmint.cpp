@@ -251,43 +251,29 @@ void Varmint::battery_current_set_multiplier(double multiplier)
 bool Varmint::gnss_present() { return gps_.initGood(); }
 bool Varmint::gnss_has_new_data() { return gps_.rxFifoCount() > 0; }
 
-bool Varmint::gnss_read(rosflight_firmware::GNSSData * gnss, rosflight_firmware::GNSSFull * gnss_full)
+bool Varmint::gnss_read(rosflight_firmware::GNSSData * gnss)
 {
   UbxPacket p;
 
   if (gps_.rxFifoReadMostRecent((uint8_t *) &p, sizeof(p))) {
-    gnss_full->time_of_week = p.pvt.iTOW;
-    gnss_full->year = p.pvt.year;
-    gnss_full->month = p.pvt.month;
-    gnss_full->day = p.pvt.day;
-    gnss_full->hour = p.pvt.hour;
-    gnss_full->min = p.pvt.min;
-    gnss_full->sec = p.pvt.sec;
-    gnss_full->valid = p.pvt.valid;
-    gnss_full->t_acc = p.pvt.tAcc;
-    gnss_full->nano = p.pvt.nano;
-    gnss_full->fix_type = (rosflight_firmware::GNSSFixType) p.pvt.fixType;
-    gnss_full->num_sat = p.pvt.numSV;
-    gnss_full->lon = p.pvt.lon;
-    gnss_full->lat = p.pvt.lat;
-    gnss_full->height = p.pvt.height;
-    gnss_full->height_msl = p.pvt.hMSL;
-    gnss_full->h_acc = p.pvt.hAcc;
-    gnss_full->v_acc = p.pvt.vAcc;
-    gnss_full->vel_n = p.pvt.velN;
-    gnss_full->vel_e = p.pvt.velE;
-    gnss_full->vel_d = p.pvt.velD;
-    gnss_full->g_speed = p.pvt.gSpeed;
-    gnss_full->head_mot = p.pvt.headMot;
-    gnss_full->s_acc = p.pvt.sAcc;
-    gnss_full->head_acc = p.pvt.headAcc;
-    gnss_full->p_dop = p.pvt.pDOP;
-    gnss_full->rosflight_timestamp = p.drdy;
-
-    gnss->time_of_week = p.time.iTOW;
-    gnss->nanos = p.time.fTOW;
-
+    gnss->time_of_week = p.pvt.iTOW;
+    gnss->year = p.pvt.year;
+    gnss->month = p.pvt.month;
+    gnss->day = p.pvt.day;
+    gnss->hour = p.pvt.hour;
+    gnss->min = p.pvt.min;
+    gnss->sec = p.pvt.sec;
     gnss->fix_type = (rosflight_firmware::GNSSFixType) p.pvt.fixType;
+    gnss->num_sat = p.pvt.numSV;
+    gnss->lon = p.pvt.lon;
+    gnss->lat = p.pvt.lat;
+    gnss->height = p.pvt.height;
+    gnss->h_acc = p.pvt.hAcc;
+    gnss->v_acc = p.pvt.vAcc;
+    gnss->vel_n = p.pvt.velN;
+    gnss->vel_e = p.pvt.velE;
+    gnss->vel_d = p.pvt.velD;
+    gnss->s_acc = p.pvt.sAcc;
 
     struct tm tm;
     tm.tm_sec = p.pvt.sec;
@@ -296,26 +282,9 @@ bool Varmint::gnss_read(rosflight_firmware::GNSSData * gnss, rosflight_firmware:
     tm.tm_mday = p.pvt.day;
     tm.tm_mon = p.pvt.month - 1;
     tm.tm_year = p.pvt.year - 1900;
-    gnss->time = mktime(&tm);
-    gnss->lat = p.pvt.lat;
-    gnss->lon = p.pvt.lon;
-    gnss->height = p.pvt.height;
-    gnss->vel_n = p.pvt.velN;
-    gnss->vel_e = p.pvt.velE;
-    gnss->vel_d = p.pvt.velD;
-    gnss->h_acc = p.pvt.hAcc;
-    gnss->v_acc = p.pvt.vAcc;
+    gnss->seconds = mktime(&tm);
+    gnss->nanos = p.pvt.nano;
 
-    gnss->ecef.x = p.ecefp.ecefX;
-    gnss->ecef.y = p.ecefp.ecefY;
-    gnss->ecef.z = p.ecefp.ecefZ;
-    gnss->ecef.p_acc = p.ecefp.pAcc;
-
-    gnss->ecef.vx = p.ecefv.ecefVX;
-    gnss->ecef.vy = p.ecefv.ecefVY;
-    gnss->ecef.vz = p.ecefv.ecefVZ;
-    gnss->ecef.s_acc = p.ecefv.sAcc;
-    gnss->rosflight_timestamp = p.drdy;
     return true;
   }
 
