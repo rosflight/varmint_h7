@@ -58,6 +58,8 @@ enum GNSSFixType
 
 struct GNSSData
 {
+  uint64_t time_of_week;  // Used internally to firmware for checking gnss
+                          // messages. Not included in ROS2 or MAVlink messages
   uint64_t seconds;  // Unix time, in seconds
   uint64_t nanos; // Fractional time
   GNSSFixType fix_type;
