@@ -131,7 +131,7 @@ uint16_t Varmint::sensors_init_message_count() { return varmint.status_len(); }
 bool Varmint::sensors_init_message_good(uint16_t i) { return varmint.status(i)->initGood(); }
 
 uint16_t Varmint::sensors_init_message(char * message, uint16_t size, uint16_t i)
-  {
+{
   if (i > varmint.status_len()) return 0;
 
   uint32_t status = varmint.status(i)->status();
@@ -163,7 +163,7 @@ bool Varmint::imu_read(float accel[3], float * temperature, float gyro[3], uint6
   }
   return false;
 }
-void Varmint::imu_not_responding_error(){};
+void Varmint::imu_not_responding_error() {};
 // Do nothing for now
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -265,15 +265,15 @@ bool Varmint::gnss_read(rosflight_firmware::GNSSData * gnss)
     gnss->sec = p.pvt.sec;
     gnss->fix_type = (rosflight_firmware::GNSSFixType) p.pvt.fixType;
     gnss->num_sat = p.pvt.numSV;
-    gnss->lon = p.pvt.lon;
-    gnss->lat = p.pvt.lat;
-    gnss->height = p.pvt.height;
-    gnss->h_acc = p.pvt.hAcc;
-    gnss->v_acc = p.pvt.vAcc;
-    gnss->vel_n = p.pvt.velN;
-    gnss->vel_e = p.pvt.velE;
-    gnss->vel_d = p.pvt.velD;
-    gnss->s_acc = p.pvt.sAcc;
+    gnss->lon = (double) 1e-7 * p.pvt.lon;      // Convert 100's of nanodegs into deg (DDS format)
+    gnss->lat = (double) 1e-7 * p.pvt.lat;      // Convert 100's of nanodegs into deg (DDS format)
+    gnss->height = (float) 1e-3 * p.pvt.height; // mm to m
+    gnss->h_acc = (float) 1e-3 * p.pvt.hAcc;
+    gnss->v_acc = (float) 1e-3 * p.pvt.vAcc;
+    gnss->vel_n = (float) 1e-3 * p.pvt.velN;    // mm/s to m/s
+    gnss->vel_e = (float) 1e-3 * p.pvt.velE;
+    gnss->vel_d = (float) 1e-3 * p.pvt.velD;
+    gnss->s_acc = (float) 1e-3 * p.pvt.sAcc;
 
     struct tm tm;
     tm.tm_sec = p.pvt.sec;
@@ -293,7 +293,7 @@ bool Varmint::gnss_read(rosflight_firmware::GNSSData * gnss)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // RC
-void Varmint::rc_init(rc_type_t rc_type){};
+void Varmint::rc_init(rc_type_t rc_type) {};
 bool Varmint::rc_lost() { return rc_.lol(); }
 
 bool Varmint::rc_has_new_data() { return rc_.rxFifoCount() > 0; }
