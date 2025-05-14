@@ -257,12 +257,6 @@ bool Varmint::gnss_read(rosflight_firmware::GNSSData * gnss)
 
   if (gps_.rxFifoReadMostRecent((uint8_t *) &p, sizeof(p))) {
     gnss->time_of_week = p.pvt.iTOW;
-    gnss->year = p.pvt.year;
-    gnss->month = p.pvt.month;
-    gnss->day = p.pvt.day;
-    gnss->hour = p.pvt.hour;
-    gnss->min = p.pvt.min;
-    gnss->sec = p.pvt.sec;
     gnss->fix_type = (rosflight_firmware::GNSSFixType) p.pvt.fixType;
     gnss->num_sat = p.pvt.numSV;
     gnss->lon = (double) 1e-7 * p.pvt.lon;      // Convert 100's of nanodegs into deg (DDS format)
@@ -284,6 +278,8 @@ bool Varmint::gnss_read(rosflight_firmware::GNSSData * gnss)
     tm.tm_year = p.pvt.year - 1900;
     gnss->seconds = mktime(&tm);
     gnss->nanos = p.pvt.nano;
+
+    gnss->rosflight_timestamp = p.drdy;
 
     return true;
   }

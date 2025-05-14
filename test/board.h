@@ -61,24 +61,19 @@ struct GNSSData
   uint64_t time_of_week;  // Used internally to firmware for checking gnss
                           // messages. Not included in ROS2 or MAVlink messages
   uint64_t seconds;  // Unix time, in seconds
-  uint64_t nanos; // Fractional time
+  uint32_t nanos; // Fractional time
   GNSSFixType fix_type;
-  uint16_t year;
-  uint8_t month;
-  uint8_t day;
-  uint8_t hour;
-  uint8_t min;
-  uint8_t sec;
   uint8_t num_sat;
-  int32_t lon;
-  int32_t lat;
-  int32_t height;
-  int32_t vel_n;  // mm/s
-  int32_t vel_e;  // mm/s
-  int32_t vel_d;  // mm/s
-  uint32_t h_acc; // mm
-  uint32_t v_acc; // mm
-  uint32_t s_acc; // mm/s
+  double lon;
+  double lat;
+  float height;
+  float vel_n;  // m/s
+  float vel_e;  // m/s
+  float vel_d;  // m/s
+  float h_acc;  // m
+  float v_acc;  // m
+  float s_acc;  // m/s
+  uint64_t rosflight_timestamp; // microseconds, time stamp of last byte in the message
 
   GNSSData() { memset(this, 0, sizeof(GNSSData)); }
 };
